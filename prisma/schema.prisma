@@ -1,0 +1,92 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  companies     Company[]
+  workSessions  WorkSession[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Company {
+  id                  String   @id @default(cuid())
+  name                String
+  hourlyRate          Float    // Taxa por hora (ex: "x", "a")
+  fixedDeduction      Float    // Desconto fixo (antes da fonte)
+  percentageDeduction Float    // Desconto percentual (na fonte, "y"%)
+  paymentDay          Int?     // Dia do mês que costumam pagar
+  
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workSessions        WorkSession[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model WorkSession {
+  id          String   @id @default(cuid())
+  date        DateTime // Dia e Hora do trabalho
+  duration    Float    // Em horas (ex: 4.5 para 4h30)
+  earnings    Float    // Valor ganho calculado no momento (para evitar problemas caso a taxa mude)
+  description String?
+  received    Boolean  @default(false) // Se já foi pago
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
