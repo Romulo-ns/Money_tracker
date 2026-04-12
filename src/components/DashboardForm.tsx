@@ -30,7 +30,7 @@ export default function DashboardForm({ companies }: { companies: any[] }) {
         <label className="text-xs font-medium text-gray-400">Empresa / Cliente</label>
         <select name="companyId" required className="w-full mt-1 px-3 py-2 text-sm rounded-lg input-field appearance-none bg-[var(--background)]">
           <option value="">Selecione...</option>
-          {companies.map(c => (
+          {companies.map((c: Company) => (
              <option key={c.id} value={c.id}>{c.name} (€{c.hourlyRate}/h)</option>
           ))}
         </select>

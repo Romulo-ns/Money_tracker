@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { createCompany } from "@/app/actions/company";
 import { Building2, Plus, Percent } from "lucide-react";
+import { Company } from "@prisma/client";
 
 export default async function CompaniesPage() {
   const session = await auth();
