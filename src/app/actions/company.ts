@@ -35,6 +35,4 @@ export async function createCompany(formData: FormData) {
 
   revalidatePath("/companies");
   revalidatePath("/");
-  
-  return { success: true };
 }
