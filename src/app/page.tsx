@@ -124,11 +124,11 @@ export default async function DashboardPage() {
                 Pagamentos do mês passado pendentes!
               </h3>
               <div className="space-y-3">
-                {pendingLastMonth.map(session => (
+                {pendingLastMonth.map((session: WorkSession & { company: Company }) => (
                   <div key={session.id} className="flex items-center justify-between bg-[#18181b] p-3 rounded-xl border border-[#27272a]">
                     <div>
                       <div className="font-semibold">{session.company.name}</div>
-                      <div className="text-xs text-gray-400">{session.duration}h • €{session.earnings.toFixed(2)}</div>
+                      <div className="text-xs text-gray-400">{session.duration}h • €{session.earnings.toNumber().toFixed(2)}</div>
                     </div>
                     <PaymentConfirmButton sessionId={session.id} />
                   </div>
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
               <div className="text-center text-gray-500 py-8">Nenhum lançamento este mês ainda.</div>
             ) : (
               <div className="space-y-4">
-                {currentMonthSessions.map(session => (
+                {currentMonthSessions.map((session: WorkSession & { company: Company }) => (
                   <div key={session.id} className="flex justify-between items-center pb-4 border-b border-[#27272a] last:border-0 last:pb-0">
                     <div>
                       <div className="font-medium">{session.company.name} {session.description && <span className="text-gray-400 text-sm font-normal">— {session.description}</span>}</div>
