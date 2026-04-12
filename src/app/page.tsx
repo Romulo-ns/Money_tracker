@@ -1,16 +1,17 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { startOfMonth, endOfMonth, subMonths } from "date-fns";
-import { Zap, Clock, Coins, CheckCircle, AlertCircle } from "lucide-react";
+import { Zap, Clock, Coins, AlertCircle } from "lucide-react";
 import DashboardForm from "@/components/DashboardForm";
 import PaymentConfirmButton from "@/components/PaymentConfirmButton";
+import LandingPage from "@/components/LandingPage";
 
 export default async function DashboardPage() {
   const session = await auth();
+  
   if (!session?.user?.id) {
-    redirect("/login");
+    return <LandingPage />;
   }
 
   const companies = await prisma.company.findMany({

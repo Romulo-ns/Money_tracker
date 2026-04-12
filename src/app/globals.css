@@ -62,3 +62,13 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px var(--primary-glow);
 }
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-flow {
+  animation: gradient-flow 6s ease infinite;
+}
