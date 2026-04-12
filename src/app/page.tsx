@@ -6,6 +6,7 @@ import { Zap, Clock, Coins, AlertCircle } from "lucide-react";
 import DashboardForm from "@/components/DashboardForm";
 import PaymentConfirmButton from "@/components/PaymentConfirmButton";
 import LandingPage from "@/components/LandingPage";
+import { Company, WorkSession } from "@prisma/client";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -128,7 +129,7 @@ export default async function DashboardPage() {
                   <div key={session.id} className="flex items-center justify-between bg-[#18181b] p-3 rounded-xl border border-[#27272a]">
                     <div>
                       <div className="font-semibold">{session.company.name}</div>
-                      <div className="text-xs text-gray-400">{session.duration}h • €{session.earnings.toNumber().toFixed(2)}</div>
+                      <div className="text-xs text-gray-400">{session.duration}h • €{session.earnings.toFixed(2)}</div>
                     </div>
                     <PaymentConfirmButton sessionId={session.id} />
                   </div>
