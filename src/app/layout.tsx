@@ -21,7 +21,7 @@ export default async function RootLayout({
 
   return (
     <html lang="pt">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <nav className="border-b border-[#27272a] bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">

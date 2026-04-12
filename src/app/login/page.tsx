@@ -4,6 +4,7 @@ import { useActionState, useEffect } from "react";
 import { loginUser } from "@/app/actions/auth";
 import Link from "next/link";
 import { ArrowRight, Wallet } from "lucide-react";
+import SocialLogin from "@/components/SocialLogin";
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(
@@ -65,6 +66,8 @@ export default function LoginPage() {
             {!isPending && <ArrowRight className="w-5 h-5" />}
           </button>
         </form>
+
+        <SocialLogin />
 
         <p className="text-center text-sm text-gray-400 mt-8 relative z-10">
           Ainda não tem conta?{" "}

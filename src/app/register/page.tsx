@@ -5,6 +5,7 @@ import { registerUser } from "@/app/actions/auth";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import SocialLogin from "@/components/SocialLogin";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -85,6 +86,8 @@ export default function RegisterPage() {
             {!isPending && <ArrowRight className="w-5 h-5" />}
           </button>
         </form>
+
+        <SocialLogin />
 
         <p className="text-center text-sm text-gray-400 mt-8 relative z-10">
           Já tem conta?{" "}
