@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import Link from "next/link";
 import { Wallet, Settings, LogOut, Home } from "lucide-react";
 
@@ -37,7 +37,10 @@ export default async function RootLayout({
                   <Link href="/companies" className="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors">
                     <Settings className="w-4 h-4" /> Empresas
                   </Link>
-                  <form action="/api/auth/signout" method="POST">
+                  <form action={async () => {
+                    "use server";
+                    await signOut();
+                  }}>
                     <button type="submit" className="text-sm font-medium text-red-400 hover:text-red-300 flex items-center gap-2 transition-colors">
                       <LogOut className="w-4 h-4" /> Sair
                     </button>
