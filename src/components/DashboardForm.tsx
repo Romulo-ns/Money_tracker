@@ -1,19 +1,20 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState } from "react";
 import { addWorkSession } from "@/app/actions/workSession";
+import { Company } from "@prisma/client";
 
-export default function DashboardForm({ companies }: { companies: any[] }) {
+export default function DashboardForm({ companies }: { companies: Company[] }) {
   const [state, formAction, isPending] = useActionState(
     async (prevState: any, formData: FormData) => {
       const formDate = formData.get("date") as string;
       if (!formDate) {
-        // If empty string, set it explicitly to today
+        // Se a data estiver vazia, define como "agora" no fuso horário correto
         const dt = new Date();
         dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
         formData.set("date", dt.toISOString().slice(0, 16));
       }
-      return await addWorkSession(formData);
+      return (await addWorkSession(formData)) as { success: boolean, error?: string };
     },
     null
   );
