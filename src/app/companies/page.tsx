@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createCompany } from "@/app/actions/company";
 import { Building2, Plus, Percent } from "lucide-react";
 import { Company } from "@prisma/client";
+import { DeleteCompanyButton } from "@/components/DeleteCompanyButton";
 
 export default async function CompaniesPage() {
   const session = await auth();
@@ -65,7 +66,10 @@ export default async function CompaniesPage() {
 
         {/* Lista de Empresas */}
         {companies.map((company) => (
-          <div key={company.id} className="glass-card p-6 rounded-2xl flex flex-col justify-between">
+          <div key={company.id} className="glass-card p-6 rounded-2xl flex flex-col justify-between group relative">
+            <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+              <DeleteCompanyButton companyId={company.id} />
+            </div>
             <div>
               <div className="w-10 h-10 bg-[#18181b] rounded-xl border border-[#27272a] shadow-md flex items-center justify-center mb-4">
                 <Building2 className="text-[var(--primary)] w-5 h-5" />
