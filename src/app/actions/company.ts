@@ -58,3 +58,44 @@ export async function deleteCompany(formData: FormData) {
   revalidatePath("/companies");
   revalidatePath("/");
 }
+
+export async function updateCompany(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Não autorizado");
+  }
+
+  const companyId = formData.get("companyId") as string;
+  if (!companyId) {
+    throw new Error("ID da empresa é obrigatório.");
+  }
+
+  const name = formData.get("name") as string;
+  const hourlyRate = parseFloat(formData.get("hourlyRate") as string);
+  const fixedDeduction = parseFloat(formData.get("fixedDeduction") as string) || 0;
+  const percentageDeduction = parseFloat(formData.get("percentageDeduction") as string) || 0;
+  
+  const paymentDayString = formData.get("paymentDay") as string;
+  const paymentDay = paymentDayString ? parseInt(paymentDayString, 10) : null;
+
+  if (!name || isNaN(hourlyRate)) {
+    throw new Error("Nome e Valor por Hora são obrigatórios.");
+  }
+
+  await prisma.company.updateMany({
+    where: {
+      id: companyId,
+      userId: session.user.id,
+    },
+    data: {
+      name,
+      hourlyRate,
+      fixedDeduction,
+      percentageDeduction,
+      paymentDay,
+    }
+  });
+
+  revalidatePath("/companies");
+  revalidatePath("/");
+}
