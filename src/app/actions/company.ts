@@ -36,3 +36,25 @@ export async function createCompany(formData: FormData) {
   revalidatePath("/companies");
   revalidatePath("/");
 }
+
+export async function deleteCompany(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Não autorizado");
+  }
+
+  const companyId = formData.get("companyId") as string;
+  if (!companyId) {
+    throw new Error("ID da empresa é obrigatório.");
+  }
+
+  await prisma.company.deleteMany({
+    where: {
+      id: companyId,
+      userId: session.user.id,
+    }
+  });
+
+  revalidatePath("/companies");
+  revalidatePath("/");
+}
