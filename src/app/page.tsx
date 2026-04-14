@@ -8,6 +8,7 @@ import PaymentConfirmButton from "@/components/PaymentConfirmButton";
 import LandingPage from "@/components/LandingPage";
 import { Company, WorkSession } from "@prisma/client";
 import { EditMonthlyGoalModal } from "@/components/EditMonthlyGoalModal";
+import { DeleteWorkSessionButton } from "@/components/DeleteWorkSessionButton";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -140,7 +141,10 @@ export default async function DashboardPage() {
                       <div className="font-semibold">{session.company.name}</div>
                       <div className="text-xs text-gray-400">{session.duration}h • €{session.earnings.toFixed(2)}</div>
                     </div>
-                    <PaymentConfirmButton sessionId={session.id} />
+                    <div className="flex items-center gap-2">
+                      <PaymentConfirmButton sessionId={session.id} />
+                      <DeleteWorkSessionButton sessionId={session.id} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -160,8 +164,11 @@ export default async function DashboardPage() {
                       <div className="font-medium">{session.company.name} {session.description && <span className="text-gray-400 text-sm font-normal">— {session.description}</span>}</div>
                       <div className="text-xs text-gray-500 mt-1">{session.date.toLocaleDateString("pt-PT")} • {session.duration} horas</div>
                     </div>
-                    <div className="text-right font-bold text-[var(--primary)]">
-                      +€{session.earnings.toFixed(2)}
+                    <div className="flex items-center gap-4">
+                      <div className="text-right font-bold text-[var(--primary)]">
+                        +€{session.earnings.toFixed(2)}
+                      </div>
+                      <DeleteWorkSessionButton sessionId={session.id} />
                     </div>
                   </div>
                 ))}

@@ -73,3 +73,24 @@ export async function markAsReceived(sessionId: string) {
     revalidatePath("/");
   }
 }
+
+export async function deleteWorkSession(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Não autorizado");
+  }
+
+  const sessionId = formData.get("sessionId") as string;
+  if (!sessionId) {
+    throw new Error("ID do lançamento é obrigatório.");
+  }
+
+  await prisma.workSession.deleteMany({
+    where: {
+      id: sessionId,
+      userId: session.user.id,
+    }
+  });
+
+  revalidatePath("/");
+}
