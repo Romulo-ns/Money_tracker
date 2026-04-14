@@ -9,6 +9,7 @@ import LandingPage from "@/components/LandingPage";
 import { Company, WorkSession } from "@prisma/client";
 import { EditMonthlyGoalModal } from "@/components/EditMonthlyGoalModal";
 import { DeleteWorkSessionButton } from "@/components/DeleteWorkSessionButton";
+import { EditWorkSessionModal } from "@/components/EditWorkSessionModal";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -143,6 +144,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <PaymentConfirmButton sessionId={session.id} />
+                      <EditWorkSessionModal workSession={session} companies={companies} />
                       <DeleteWorkSessionButton sessionId={session.id} />
                     </div>
                   </div>
@@ -164,10 +166,11 @@ export default async function DashboardPage() {
                       <div className="font-medium">{session.company.name} {session.description && <span className="text-gray-400 text-sm font-normal">— {session.description}</span>}</div>
                       <div className="text-xs text-gray-500 mt-1">{session.date.toLocaleDateString("pt-PT")} • {session.duration} horas</div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right font-bold text-[var(--primary)]">
+                    <div className="flex items-center gap-2">
+                      <div className="text-right font-bold text-[var(--primary)] mr-2">
                         +€{session.earnings.toFixed(2)}
                       </div>
+                      <EditWorkSessionModal workSession={session} companies={companies} />
                       <DeleteWorkSessionButton sessionId={session.id} />
                     </div>
                   </div>

@@ -68,7 +68,7 @@ export default async function CompaniesPage() {
         {/* Lista de Empresas */}
         {companies.map((company) => (
           <div key={company.id} className="glass-card p-6 rounded-2xl flex flex-col justify-between group relative">
-            <div className="absolute top-6 right-6 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-6 right-6 flex items-center">
               <EditCompanyModal company={company} />
               <DeleteCompanyButton companyId={company.id} />
             </div>
