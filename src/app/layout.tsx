@@ -8,8 +8,29 @@ import { Wallet, Settings, LogOut, Home } from "lucide-react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Money Tracker",
-  description: "Controle suas horas e seus ganhos extras",
+  metadataBase: new URL("https://money-tracker-pro.vercel.app/"),
+  title: "Money Tracker | Controle seu dinheiro e tempo",
+  description: "A plataforma definitiva para freelancers e trabalhadores autônomos gerenciarem suas horas, empresas e ganhos mensais de forma profissional.",
+  keywords: ["money tracker", "financeiro", "gestão de tempo", "freelancer", "controle de ganhos", "produtividade"],
+  authors: [{ name: "Money Tracker Team" }],
+  openGraph: {
+    title: "Money Tracker | Gestão Financeira para Autônomos",
+    description: "Controle suas horas e ganhos extras com facilidade. Configure metas mensais e gerencie suas empresas em um só lugar.",
+    url: "https://money-tracker-pro.vercel.app/",
+    siteName: "Money Tracker",
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Money Tracker | Gestão Financeira para Autônomos",
+    description: "Simplifique sua vida financeira. Monitore seu trabalho e alcance suas metas mensais.",
+    creator: "@moneytracker",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function RootLayout({
