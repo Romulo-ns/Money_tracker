@@ -73,3 +73,35 @@ export async function markAsReceived(sessionId: string) {
     revalidatePath("/");
   }
 }
+
+export async function deleteWorkSession(formData: FormData) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Não autorizado" };
+    }
+
+    const sessionId = formData.get("sessionId") as string;
+    if (!sessionId) {
+      return { success: false, error: "ID do lançamento é obrigatório." };
+    }
+
+    const workSession = await prisma.workSession.findUnique({
+      where: { id: sessionId }
+    });
+
+    if (!workSession || workSession.userId !== session.user.id) {
+      return { success: false, error: "Lançamento não encontrado." };
+    }
+
+    await prisma.workSession.delete({
+      where: { id: sessionId }
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Erro ao deletar sessão:", error);
+    return { success: false, error: "Erro interno no servidor" };
+  }
+}
