@@ -7,6 +7,7 @@ import DashboardForm from "@/components/DashboardForm";
 import PaymentConfirmButton from "@/components/PaymentConfirmButton";
 import LandingPage from "@/components/LandingPage";
 import { Company, WorkSession } from "@prisma/client";
+import { EditMonthlyGoalModal } from "@/components/EditMonthlyGoalModal";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -66,9 +67,14 @@ export default async function DashboardPage() {
     orderBy: { date: "desc" }
   });
 
-  // Meta Mensal (Fictícia por enquanto, podemos evoluir para ser configurável)
-  const monthlyGoal = 500;
-  const progressPercentage = Math.min((totalCurrentEarnings / monthlyGoal) * 100, 100);
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { monthlyGoal: true }
+  });
+
+  const monthlyGoal = user?.monthlyGoal || 500;
+  // Prevent division by zero if goal is somehow 0
+  const progressPercentage = monthlyGoal > 0 ? Math.min((totalCurrentEarnings / monthlyGoal) * 100, 100) : 100;
 
   return (
     <div className="p-4 sm:p-8 space-y-8">
@@ -77,8 +83,11 @@ export default async function DashboardPage() {
       <div className="glass-card p-6 rounded-2xl relative overflow-hidden">
         <div className="flex justify-between items-end mb-2">
           <div>
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Meta Mensal de Ganhos</h2>
-            <div className="text-2xl font-bold flex items-baseline gap-2">
+            <div className="flex items-center">
+              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Meta Mensal de Ganhos</h2>
+              <EditMonthlyGoalModal currentGoal={monthlyGoal} />
+            </div>
+            <div className="text-2xl font-bold flex items-baseline gap-2 mt-1">
               €{totalCurrentEarnings.toFixed(2)} <span className="text-sm font-normal text-gray-500">/ €{monthlyGoal.toFixed(2)}</span>
             </div>
           </div>
