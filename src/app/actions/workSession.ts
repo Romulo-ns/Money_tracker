@@ -94,3 +94,52 @@ export async function deleteWorkSession(formData: FormData) {
 
   revalidatePath("/");
 }
+
+export async function updateWorkSession(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Não autorizado");
+
+  const sessionId = formData.get("sessionId") as string;
+  const companyId = formData.get("companyId") as string;
+  const hours = parseFloat(formData.get("hours") as string);
+  const dateString = formData.get("date") as string;
+  const description = formData.get("description") as string;
+
+  if (!sessionId || !companyId || isNaN(hours) || !dateString) {
+    throw new Error("Preencha todos os campos corretamente.");
+  }
+
+  const company = await prisma.company.findUnique({
+    where: { id: companyId }
+  });
+
+  if (!company || company.userId !== session.user.id) {
+    throw new Error("Empresa não encontrada.");
+  }
+
+  const grossEarnings = hours * company.hourlyRate;
+  let netEarnings = grossEarnings - company.fixedDeduction;
+  
+  if (company.percentageDeduction > 0) {
+    const tax = netEarnings * (company.percentageDeduction / 100);
+    netEarnings = netEarnings - tax;
+  }
+
+  if (netEarnings < 0) netEarnings = 0;
+
+  await prisma.workSession.updateMany({
+    where: {
+      id: sessionId,
+      userId: session.user.id
+    },
+    data: {
+      companyId: company.id,
+      duration: hours,
+      earnings: netEarnings,
+      date: new Date(dateString),
+      description,
+    }
+  });
+
+  revalidatePath("/");
+}
