@@ -18,7 +18,7 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [pickerYear, setPickerYear] = useState(currentYear);
   const pickerRef = useRef<HTMLDivElement>(null);
-  
+
   const date = new Date(currentYear, currentMonth - 1);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
   };
 
   const months = [
-    "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+    "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
     "Jul", "Ago", "Set", "Out", "Nov", "Dez"
   ];
 
@@ -60,15 +60,15 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
     <div className="relative">
       <div className="flex items-center justify-between bg-[#18181b] p-4 rounded-2xl border border-[#27272a] shadow-lg">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={handlePrev}
             className="p-2 hover:bg-[#27272a] rounded-full transition-colors text-gray-400 hover:text-white"
             title="Mês Anterior"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
-          
-          <button 
+
+          <button
             onClick={() => setIsPickerOpen(!isPickerOpen)}
             className="flex flex-col items-center min-w-[150px] hover:bg-[#27272a] p-2 rounded-xl transition-all cursor-pointer group"
           >
@@ -80,7 +80,7 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
             </span>
           </button>
 
-          <button 
+          <button
             onClick={handleNext}
             className="p-2 hover:bg-[#27272a] rounded-full transition-colors text-gray-400 hover:text-white"
             title="Próximo Mês"
@@ -89,7 +89,7 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
           </button>
         </div>
 
-        <button 
+        <button
           onClick={handleToday}
           className="flex items-center gap-2 px-4 py-2 bg-[#27272a] hover:bg-[#3f3f46] text-white text-sm font-medium rounded-xl transition-all active:scale-95"
         >
@@ -101,30 +101,30 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
       {/* Month Picker Modal/Overlay */}
       <AnimatePresence>
         {isPickerOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             ref={pickerRef}
-            className="absolute top-full left-0 mt-4 z-[60] w-full sm:w-[400px] bg-[#09090b] border border-[#27272a] rounded-2xl shadow-2xl p-6 glass-card"
+            className="absolute top-full left-0 mt-4 z-[60] w-full sm:w-[400px] bg-[#18181b] border border-[#27272a] rounded-2xl shadow-2xl p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
-                <button 
+                <button
                   onClick={() => setPickerYear(pickerYear - 1)}
                   className="p-1 hover:bg-[#27272a] rounded-lg text-gray-400"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <span className="text-xl font-bold text-white">{pickerYear}</span>
-                <button 
+                <button
                   onClick={() => setPickerYear(pickerYear + 1)}
                   className="p-1 hover:bg-[#27272a] rounded-lg text-gray-400"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
-              <button 
+              <button
                 onClick={() => setIsPickerOpen(false)}
                 className="p-2 hover:bg-[#27272a] rounded-full text-gray-400"
               >
@@ -143,8 +143,8 @@ export default function MonthSelector({ currentMonth, currentYear, activeMonths 
                     onClick={() => selectMonth(index)}
                     className={`
                       relative py-3 rounded-xl font-medium transition-all
-                      ${isSelected 
-                        ? "bg-[var(--primary)] text-black font-bold" 
+                      ${isSelected
+                        ? "bg-[var(--primary)] text-black font-bold"
                         : "bg-[#18181b] text-gray-400 hover:bg-[#27272a] hover:text-white"}
                     `}
                   >
