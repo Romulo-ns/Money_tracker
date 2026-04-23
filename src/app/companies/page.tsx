@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { startOfYear, endOfYear } from "date-fns";
+import { Building2, Plus, Percent, TrendingUp, Coins, Globe, Calendar } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createCompany } from "@/app/actions/company";
-import { Building2, Plus, Percent } from "lucide-react";
-import { Company } from "@prisma/client";
 import { DeleteCompanyButton } from "@/components/DeleteCompanyButton";
 import { EditCompanyModal } from "@/components/EditCompanyModal";
 
@@ -13,17 +13,71 @@ export default async function CompaniesPage() {
     redirect("/login");
   }
 
-  const companies = await prisma.company.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" }
-  });
+  const now = new Date();
+  const yearStart = startOfYear(now);
+  const yearEnd = endOfYear(now);
+
+  const [companies, annualEarnings, allTimeEarnings, allTimeAggregate] = await Promise.all([
+    prisma.company.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" }
+    }),
+    prisma.workSession.groupBy({
+      by: ['companyId'],
+      where: {
+        userId: session.user.id,
+        date: { gte: yearStart, lte: yearEnd }
+      },
+      _sum: { earnings: true }
+    }),
+    prisma.workSession.groupBy({
+      by: ['companyId'],
+      where: { userId: session.user.id },
+      _sum: { earnings: true }
+    }),
+    prisma.workSession.aggregate({
+      where: { userId: session.user.id },
+      _sum: { earnings: true }
+    })
+  ]);
+
+  const totalAllTime = allTimeAggregate._sum.earnings || 0;
+  const totalAnnual = annualEarnings.reduce((acc, curr) => acc + (curr._sum.earnings || 0), 0);
+
+  const companiesWithStats = companies.map(company => ({
+    ...company,
+    annualTotal: annualEarnings.find(e => e.companyId === company.id)?._sum.earnings || 0,
+    allTimeTotal: allTimeEarnings.find(e => e.companyId === company.id)?._sum.earnings || 0
+  }));
 
   return (
     <div className="p-4 sm:p-8 space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-1">Minhas Empresas</h1>
           <p className="text-gray-400 text-sm">Configure seus locais de trabalho e taxas.</p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="glass-card px-6 py-4 rounded-2xl border-l-4 border-l-emerald-500 flex items-center gap-4">
+            <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center">
+              <Coins className="text-emerald-500 w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Total ({now.getFullYear()})</div>
+              <div className="text-2xl font-bold text-white">€{totalAnnual.toFixed(2)}</div>
+            </div>
+          </div>
+
+          <div className="glass-card px-6 py-4 rounded-2xl border-l-4 border-l-blue-500 flex items-center gap-4">
+            <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center">
+              <Globe className="text-blue-500 w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Total de Sempre</div>
+              <div className="text-2xl font-bold text-white">€{totalAllTime.toFixed(2)}</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -66,7 +120,7 @@ export default async function CompaniesPage() {
         </div>
 
         {/* Lista de Empresas */}
-        {companies.map((company) => (
+        {companiesWithStats.map((company) => (
           <div key={company.id} className="glass-card p-6 rounded-2xl flex flex-col justify-between group relative">
             <div className="absolute top-6 right-6 flex items-center">
               <EditCompanyModal company={company} />
@@ -81,13 +135,28 @@ export default async function CompaniesPage() {
                 <p>Taxa: <span className="font-semibold text-white">€{company.hourlyRate.toFixed(2)}/h</span></p>
                 {company.fixedDeduction > 0 && <p>Fixo: <span className="text-red-400">-€{company.fixedDeduction.toFixed(2)}</span></p>}
                 {company.percentageDeduction > 0 && <p>Imposto: <span className="text-red-400">-{company.percentageDeduction}%</span></p>}
+                {company.paymentDay && (
+                  <p className="flex items-center gap-1.5 mt-2 text-xs text-[var(--primary)] font-medium">
+                    <Calendar className="w-3.5 h-3.5" />
+                    Pagamento: dia {company.paymentDay}
+                  </p>
+                )}
               </div>
             </div>
-            {company.paymentDay && (
-              <div className="mt-6 pt-4 border-t border-[var(--border)] text-xs text-gray-400">
-                Dia de pagamento: <strong className="text-gray-200">{company.paymentDay}</strong>
+            <div className="mt-6 pt-4 border-t border-[#27272a] space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Este Ano:</span>
+                  <span className="font-bold text-white">€{company.annualTotal.toFixed(2)}</span>
+                </div>
               </div>
-            )}
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <Globe className="w-3.5 h-3.5 text-blue-500" />
+                <span>Total de Sempre:</span>
+                <span className="font-bold text-white">€{company.allTimeTotal.toFixed(2)}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
