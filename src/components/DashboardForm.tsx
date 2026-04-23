@@ -3,17 +3,17 @@
 import { useActionState } from "react";
 import { addWorkSession } from "@/app/actions/workSession";
 import { Company } from "@prisma/client";
+import DateTimePicker from "./DateTimePicker";
+import CompanySelector from "./CompanySelector";
+import { useState } from "react";
 
 export default function DashboardForm({ companies }: { companies: Company[] }) {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCompanyId, setSelectedCompanyId] = useState("");
+  
   const [state, formAction, isPending] = useActionState(
     async (prevState: any, formData: FormData) => {
-      const formDate = formData.get("date") as string;
-      if (!formDate) {
-        // Se a data estiver vazia, define como "agora" no fuso horário correto
-        const dt = new Date();
-        dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
-        formData.set("date", dt.toISOString().slice(0, 16));
-      }
+      // The custom picker handles its own hidden input named "date"
       return (await addWorkSession(formData)) as { success: boolean, error?: string };
     },
     null
@@ -28,13 +28,13 @@ export default function DashboardForm({ companies }: { companies: Company[] }) {
       )}
       
       <div>
-        <label className="text-xs font-medium text-gray-400">Empresa / Cliente</label>
-        <select name="companyId" required className="w-full mt-1 px-3 py-2 text-sm rounded-lg input-field appearance-none bg-[var(--background)]">
-          <option value="">Selecione...</option>
-          {companies.map((c: Company) => (
-             <option key={c.id} value={c.id}>{c.name} (€{c.hourlyRate}/h)</option>
-          ))}
-        </select>
+        <label className="text-xs font-medium text-gray-400 mb-1 block">Empresa / Cliente</label>
+        <CompanySelector 
+          name="companyId" 
+          companies={companies} 
+          value={selectedCompanyId} 
+          onChange={setSelectedCompanyId} 
+        />
       </div>
 
       <div>
@@ -43,8 +43,12 @@ export default function DashboardForm({ companies }: { companies: Company[] }) {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-400">Data e Hora (Opçional, Padrão: Agora)</label>
-        <input name="date" type="datetime-local" className="w-full mt-1 px-3 py-2 text-sm rounded-lg input-field bg-[var(--background)] [color-scheme:dark]" />
+        <label className="text-xs font-medium text-gray-400 mb-1 block">Data e Hora</label>
+        <DateTimePicker 
+          name="date" 
+          value={selectedDate} 
+          onChange={setSelectedDate} 
+        />
       </div>
 
       <div>
