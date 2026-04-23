@@ -45,6 +45,16 @@ export default async function HistoryPage({ searchParams }: PageProps) {
     orderBy: { date: "desc" }
   });
 
+  // Buscar meses que tiveram atividade
+  const allUserSessions = await prisma.workSession.findMany({
+    where: { userId: session.user.id },
+    select: { date: true }
+  });
+
+  const activeMonths = Array.from(new Set(
+    allUserSessions.map(s => `${s.date.getFullYear()}-${s.date.getMonth() + 1}`)
+  ));
+
   const totalEarnings = sessions.reduce((acc, s) => acc + s.earnings, 0);
   const totalHours = sessions.reduce((acc, s) => acc + s.duration, 0);
 
@@ -65,7 +75,11 @@ export default async function HistoryPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      <MonthSelector currentMonth={currentMonth} currentYear={currentYear} />
+      <MonthSelector 
+        currentMonth={currentMonth} 
+        currentYear={currentYear} 
+        activeMonths={activeMonths}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass-card p-6 rounded-2xl border-t-4 border-t-[var(--primary)]">
