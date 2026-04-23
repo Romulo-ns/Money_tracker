@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Company, WorkSession } from "@prisma/client";
 import { Edit2, X, Calendar, Clock, FileText, Building2 } from "lucide-react";
 import { updateWorkSession } from "@/app/actions/workSession";
+import DateTimePicker from "./DateTimePicker";
 
 export function EditWorkSessionModal({ 
   workSession, 
@@ -15,10 +16,7 @@ export function EditWorkSessionModal({
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Format date for datetime-local input (YYYY-MM-DDTHH:MM)
-  const dateValue = new Date(workSession.date);
-  dateValue.setMinutes(dateValue.getMinutes() - dateValue.getTimezoneOffset());
-  const formattedDate = dateValue.toISOString().slice(0, 16);
+  const [selectedDate, setSelectedDate] = useState(new Date(workSession.date));
 
   async function handleUpdate(formData: FormData) {
     setLoading(true);
@@ -96,12 +94,10 @@ export function EditWorkSessionModal({
                 <label className="text-xs font-medium text-gray-400 flex items-center gap-2 mb-1 uppercase tracking-wider">
                   <Calendar className="w-3 h-3" /> Data e Hora
                 </label>
-                <input 
+                <DateTimePicker 
                   name="date" 
-                  type="datetime-local" 
-                  defaultValue={formattedDate}
-                  required
-                  className="w-full px-3 py-2 text-sm rounded-lg input-field bg-[var(--background)] [color-scheme:dark]" 
+                  value={selectedDate} 
+                  onChange={setSelectedDate} 
                 />
               </div>
 
