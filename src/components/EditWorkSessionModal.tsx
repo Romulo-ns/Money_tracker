@@ -5,6 +5,7 @@ import { Company, WorkSession } from "@prisma/client";
 import { Edit2, X, Calendar, Clock, FileText, Building2 } from "lucide-react";
 import { updateWorkSession } from "@/app/actions/workSession";
 import DateTimePicker from "./DateTimePicker";
+import CompanySelector from "./CompanySelector";
 
 export function EditWorkSessionModal({ 
   workSession, 
@@ -17,6 +18,7 @@ export function EditWorkSessionModal({
   const [loading, setLoading] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(new Date(workSession.date));
+  const [selectedCompanyId, setSelectedCompanyId] = useState(workSession.companyId);
 
   async function handleUpdate(formData: FormData) {
     setLoading(true);
@@ -63,16 +65,12 @@ export function EditWorkSessionModal({
                 <label className="text-xs font-medium text-gray-400 flex items-center gap-2 mb-1 uppercase tracking-wider">
                   <Building2 className="w-3 h-3" /> Empresa / Cliente
                 </label>
-                <select 
+                <CompanySelector 
                   name="companyId" 
-                  defaultValue={workSession.companyId}
-                  required 
-                  className="w-full px-3 py-2 text-sm rounded-lg input-field bg-[var(--background)] appearance-none"
-                >
-                  {companies.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name} (€{c.hourlyRate}/h)</option>
-                  ))}
-                </select>
+                  companies={companies} 
+                  value={selectedCompanyId} 
+                  onChange={setSelectedCompanyId} 
+                />
               </div>
 
               <div>
