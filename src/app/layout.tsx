@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { auth, signOut } from "@/auth";
 import Link from "next/link";
-import { Wallet, Settings, LogOut, Home } from "lucide-react";
+import { Wallet, Settings, LogOut, Home, History } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,6 +57,9 @@ export default async function RootLayout({
                   <>
                     <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors">
                       <Home className="w-4 h-4" /> Início
+                    </Link>
+                    <Link href="/history" className="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors">
+                      <History className="w-4 h-4" /> Histórico
                     </Link>
                     <Link href="/companies" className="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors">
                       <Settings className="w-4 h-4" /> Empresas
