@@ -119,45 +119,34 @@ export default async function HistoryPage({ searchParams }: PageProps) {
             </Link>
           </div>
         ) : (
-          <div className="space-y-1">
-            <div className="hidden sm:grid grid-cols-12 gap-4 px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
-              <div className="col-span-2">Data</div>
-              <div className="col-span-4">Empresa / Descrição</div>
-              <div className="col-span-2 text-right">Horas</div>
-              <div className="col-span-2 text-right">Ganhos</div>
-              <div className="col-span-2 text-right">Ações</div>
-            </div>
-            
-            <div className="space-y-3">
-              {sessions.map((session: WorkSession & { company: Company }) => (
-                <div 
-                  key={session.id} 
-                  className="sm:grid sm:grid-cols-12 items-center gap-4 p-4 bg-[#09090b]/50 hover:bg-[#18181b] rounded-xl border border-[#27272a] transition-all group"
-                >
-                  <div className="col-span-2 text-sm text-gray-300 mb-2 sm:mb-0">
-                    {session.date.toLocaleDateString("pt-PT")}
-                  </div>
-                  <div className="col-span-4 mb-2 sm:mb-0">
-                    <div className="font-bold text-white">{session.company.name}</div>
+          <div className="space-y-4">
+            {sessions.map((session: WorkSession & { company: Company }) => (
+              <div 
+                key={session.id} 
+                className="flex justify-between items-center pb-4 border-b border-[#27272a] last:border-0 last:pb-0 group transition-colors"
+              >
+                <div>
+                  <div className="font-medium text-white group-hover:text-[var(--primary)] transition-colors">
+                    {session.company.name} 
                     {session.description && (
-                      <div className="text-xs text-gray-500 truncate max-w-xs">{session.description}</div>
+                      <span className="text-gray-400 text-sm font-normal"> — {session.description}</span>
                     )}
                   </div>
-                  <div className="col-span-2 sm:text-right mb-2 sm:mb-0">
-                    <span className="sm:hidden text-xs text-gray-500 mr-2 font-bold uppercase">Horas:</span>
-                    <span className="font-medium">{session.duration}h</span>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {session.date.toLocaleDateString("pt-PT")} • {session.duration} horas
                   </div>
-                  <div className="col-span-2 sm:text-right mb-2 sm:mb-0">
-                    <span className="sm:hidden text-xs text-gray-500 mr-2 font-bold uppercase">Ganhos:</span>
-                    <span className="font-bold text-[var(--primary)]">€{session.earnings.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-right font-bold text-[var(--primary)] mr-2">
+                    +€{session.earnings.toFixed(2)}
                   </div>
-                  <div className="col-span-2 flex justify-end items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <EditWorkSessionModal workSession={session} companies={companies} />
                     <DeleteWorkSessionButton sessionId={session.id} />
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
